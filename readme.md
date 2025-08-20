@@ -1,6 +1,6 @@
 # YouTube Downloader (Python)
 
-A simple Python script to download videos and playlists from YouTube using the [pytube](https://pypi.org/project/pytube/) library.  
+A simple Python script to download videos and playlists from YouTube using the [yt-dlp](https://pypi.org/project/yt-dlp/) library.  
 It supports:
 - Downloading single YouTube videos
 - Downloading entire playlists
@@ -26,35 +26,35 @@ git clone https://github.com/KavyaJP/YouTube-Video-Downloader.git
 cd YouTube-Video-Downloader
 ```
 
-2. Install dependencies:
+2. Change to the Version you want to run:
+
+For Web:
+```bash
+cd Web
+```
+
+For Desktop:
+```bash
+cd Desktop
+```
+
+3. Install Dependancies:
 
 ```bash
-pip install pytube
+pip install -r requirements.txt
 ```
 
----
+4. Run the App:
 
-## ▶️ Usage
-
-Run the script:
-
+For Web:
 ```bash
-python downloader.py
+flask run
 ```
 
-Enter either:
-- A single video URL  
-- A playlist URL  
-
-The script will detect automatically and download accordingly.
-
-Example:
-
-```text
-Enter YouTube video/playlist URL: https://www.youtube.com/watch?v=abcd1234
+For Desktop:
+```bash
+python app.py
 ```
-
-Files will be saved in the `downloads/` folder.
 
 ---
 
