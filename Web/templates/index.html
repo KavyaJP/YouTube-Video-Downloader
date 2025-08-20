@@ -3,164 +3,289 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dynamic YouTube Downloader</title>
+    <link rel="icon" type="image/x-icon" href="../static/favicon.ico" />
+    <title>YouTube Downloader</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
+      :root {
+        --bg-color: #1a1a1a;
+        --surface-color: #2a2a2a;
+        --primary-color: #3b82f6; /* A clean, modern blue */
+        --text-color: #f1f1f1;
+        --border-color: #444;
+      }
       body {
-        font-family: sans-serif;
-        background: #2c2c2c;
-        color: #f1f1f1;
+        font-family: "Roboto", sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 2rem;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
         min-height: 100vh;
-        margin: 0;
-        padding: 1rem 0;
       }
       .container {
-        background: #3c3c3c;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        text-align: center;
-        width: 90%;
-        max-width: 500px;
-      }
-      h1 {
-        margin-top: 0;
-      }
-      #url-input,
-      #check-btn,
-      #format-select,
-      #download-btn {
         width: 100%;
-        padding: 12px;
-        margin-bottom: 1rem;
-        border-radius: 5px;
-        border: 1px solid #555;
-        background: #2c2c2c;
-        color: #f1f1f1;
+        max-width: 600px;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      header h1 {
+        color: var(--primary-color);
+        font-size: 2.5rem;
+        margin: 0;
+      }
+      .card {
+        background: var(--surface-color);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        margin-bottom: 2rem;
+      }
+      .input-group,
+      .format-group {
+        margin-bottom: 1.5rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        text-align: left;
+      }
+      input[type="text"],
+      select,
+      button {
+        width: 100%;
+        padding: 14px;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background: var(--bg-color);
+        color: var(--text-color);
         box-sizing: border-box;
       }
-      #check-btn,
-      #download-btn {
-        background: #555;
+      button {
+        background: var(--primary-color);
         cursor: pointer;
-        font-weight: bold;
+        font-weight: 700;
+        border: none;
+        transition: background-color 0.2s;
       }
-      #download-btn {
-        background: #d9534f;
+      button:hover {
+        background: #2563eb;
       }
-      #format-group {
+      button:disabled {
+        background: #555;
+        cursor: not-allowed;
+      }
+      #results-section {
         display: none;
       } /* Hidden by default */
-      .loader {
-        display: none;
-        margin: 1rem auto;
-        border: 4px solid #f3f3f3;
-        border-radius: 50%;
-        border-top: 4px solid #d9534f;
-        width: 30px;
-        height: 30px;
-        animation: spin 2s linear infinite;
+      .progress-container {
+        background: var(--bg-color);
+        border-radius: 8px;
+        padding: 5px;
+        margin-top: 1rem;
       }
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
+      .progress-bar {
+        background: var(--primary-color);
+        height: 24px;
+        width: 0%;
+        border-radius: 5px;
+        text-align: center;
+        line-height: 24px;
+        font-weight: 500;
+        color: white;
+        transition: width 0.3s ease;
+      }
+      #final-message {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: var(--bg-color);
+        border-radius: 8px;
+      }
+      #final-message code {
+        display: block;
+        background: #000;
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        word-wrap: break-word;
+      }
+      footer {
+        margin-top: auto;
+        color: #777;
+        font-size: 0.9rem;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Dynamic Downloader</h1>
+      <header>
+        <h1>YouTube Downloader</h1>
+      </header>
 
-      <form id="download-form" action="/download" method="post">
-        <input
-          type="text"
-          id="url-input"
-          name="url"
-          placeholder="Enter YouTube URL"
-          required
-        />
-        <button type="button" id="check-btn">Check Formats</button>
-        <div id="status-message" style="margin-bottom: 1rem"></div>
-        <div class="loader" id="loader"></div>
-
-        <div id="format-group">
-          <select id="format-select" name="format_id" required></select>
-          <button type="submit" id="download-btn">Download</button>
+      <main>
+        <div id="input-section" class="card">
+          <form id="download-form">
+            <div class="input-group">
+              <label for="url-input">YouTube URL</label>
+              <input type="text" id="url-input" name="url" required />
+            </div>
+            <button type="button" id="check-btn">Check Formats</button>
+            <div id="status-message" style="margin-top: 1rem"></div>
+            <div class="format-group" id="format-group" style="display: none">
+              <label for="format-select">Available Formats</label>
+              <select id="format-select" name="format_id" required></select>
+              <button type="submit" id="download-btn" style="margin-top: 1rem">
+                Download
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+
+        <div id="results-section" class="card">
+          <h2 id="results-header">Download Progress</h2>
+          <div class="progress-container" id="progress-container">
+            <div class="progress-bar" id="progress-bar">0%</div>
+          </div>
+          <div id="final-message"></div>
+          <button id="reset-btn" style="display: none; margin-top: 1.5rem">
+            Download Another
+          </button>
+        </div>
+      </main>
     </div>
 
+    <footer>
+      <p>&copy; 2025 - Built with Flask & yt-dlp</p>
+    </footer>
+
     <script>
-      // Get references to all our HTML elements
+      // --- Element References ---
+      const inputSection = document.getElementById("input-section");
+      const resultsSection = document.getElementById("results-section");
       const checkBtn = document.getElementById("check-btn");
+      const downloadForm = document.getElementById("download-form");
       const urlInput = document.getElementById("url-input");
       const formatGroup = document.getElementById("format-group");
       const formatSelect = document.getElementById("format-select");
-      const downloadForm = document.getElementById("download-form");
-      const loader = document.getElementById("loader");
       const statusMessage = document.getElementById("status-message");
+      const progressBar = document.getElementById("progress-bar");
+      const finalMessage = document.getElementById("final-message");
+      const resultsHeader = document.getElementById("results-header");
+      const resetBtn = document.getElementById("reset-btn");
 
-      // Add a click event listener to the "Check Formats" button
+      // --- UI State Management ---
+      function setUIState(state) {
+        if (state === "initial") {
+          inputSection.style.display = "block";
+          resultsSection.style.display = "none";
+          checkBtn.disabled = false;
+          urlInput.disabled = false;
+          resetBtn.style.display = "none";
+          statusMessage.textContent = "";
+        } else if (state === "loadingFormats") {
+          checkBtn.disabled = true;
+          statusMessage.textContent = "Fetching formats...";
+          formatGroup.style.display = "none";
+        } else if (state === "formatsLoaded") {
+          checkBtn.disabled = false;
+          formatGroup.style.display = "block";
+          statusMessage.textContent = "Select a format and click download.";
+        } else if (state === "downloading") {
+          inputSection.style.display = "none";
+          resultsSection.style.display = "block";
+          resultsHeader.textContent = "Download Progress";
+          progressBar.style.width = "0%";
+          progressBar.textContent = "0%";
+          progressBar.style.backgroundColor = "var(--primary-color)";
+          finalMessage.innerHTML = "";
+          resetBtn.style.display = "none";
+        } else if (state === "finished") {
+          resultsHeader.textContent = "Download Complete";
+          resetBtn.style.display = "block";
+        }
+      }
+
+      // --- Event Listeners ---
       checkBtn.addEventListener("click", async () => {
         const url = urlInput.value;
         if (!url) {
-          statusMessage.textContent = "Please enter a URL first.";
+          statusMessage.textContent = "Please enter a URL.";
           return;
         }
-
-        // Show loader and hide old results
-        loader.style.display = "block";
-        formatGroup.style.display = "none";
-        statusMessage.textContent = "Fetching available formats...";
+        setUIState("loadingFormats");
 
         try {
-          // Use the Fetch API to send the URL to our new Flask endpoint
           const response = await fetch("/get-formats", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ url: url }),
           });
-
-          loader.style.display = "none"; // Hide loader
-
           if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || "Failed to fetch formats.");
+            throw new Error((await response.json()).error);
           }
 
           const formats = await response.json();
-
-          // Clear any old options from the select dropdown
           formatSelect.innerHTML = "";
+          if (formats.length === 0)
+            throw new Error("No suitable formats found.");
 
-          if (formats.length === 0) {
-            statusMessage.textContent =
-              "No suitable MP4 or audio formats found.";
-            return;
-          }
-
-          // Dynamically create a new <option> for each format found
-          formats.forEach((format) => {
-            const option = document.createElement("option");
-            option.value = format.id;
-            option.textContent = format.text;
-            formatSelect.appendChild(option);
-          });
-
-          // Show the format dropdown and download button
-          formatGroup.style.display = "block";
-          statusMessage.textContent = "Select a format and click download.";
+          formats.forEach((f) => formatSelect.add(new Option(f.text, f.id)));
+          setUIState("formatsLoaded");
         } catch (error) {
-          loader.style.display = "none";
+          setUIState("initial");
           statusMessage.textContent = "Error: " + error.message;
         }
       });
+
+      downloadForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        setUIState("downloading");
+
+        // Start download and open EventSource
+        const formData = new FormData(downloadForm);
+        fetch("/download", { method: "POST", body: formData });
+
+        const eventSource = new EventSource("/progress-stream");
+        eventSource.onmessage = (e) => {
+          const data = JSON.parse(e.data);
+          if (data.status === "downloading") {
+            progressBar.style.width = data.percent + "%";
+            progressBar.textContent = data.percent + "%";
+          } else {
+            setUIState("finished");
+            if (data.status === "finished") {
+              finalMessage.innerHTML = `✅ Successfully saved:<code>${data.filename}</code>`;
+            } else if (data.status === "error") {
+              resultsHeader.textContent = "Download Failed";
+              progressBar.style.backgroundColor = "#8b0000";
+              finalMessage.innerHTML = `❌ Error:<code>${data.message}</code>`;
+            }
+            eventSource.close();
+          }
+        };
+        eventSource.onerror = () => {
+          eventSource.close();
+        };
+      });
+
+      resetBtn.addEventListener("click", () => {
+        setUIState("initial");
+      });
+
+      // Initialize UI on page load
+      setUIState("initial");
     </script>
   </body>
 </html>
