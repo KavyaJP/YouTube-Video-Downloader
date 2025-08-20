@@ -1,3 +1,5 @@
 .venv/
 .vscode/
 downloads/
+dist/
+__pycache__/
