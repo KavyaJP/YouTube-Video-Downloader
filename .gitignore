@@ -3,3 +3,6 @@
 downloads/
 dist/
 __pycache__/
+build/
+*.spec
+*.exe

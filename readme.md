@@ -53,8 +53,13 @@ flask run
 
 For Desktop:
 ```bash
-python app.py
+python main.py
 ```
+
+    If you Want to wrap the desktop to a standalone executable:
+    ```bash
+    pyinstaller --name YouTubeDownloader --onefile --windowed main.py
+    ```
 
 ---
 
