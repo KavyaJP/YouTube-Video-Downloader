@@ -1,4 +1,9 @@
 @echo off
 TITLE Speech Emotion Recognition Launcher
 
-start python app.py
+echo "Starting and the Web Interface"
+start http://localhost:5000
+
+python app.py
+
+pause
