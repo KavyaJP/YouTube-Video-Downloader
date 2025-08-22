@@ -1,236 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>YouTube Downloader</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="shortcut icon" href="../static/favicon.png" type="image/x-icon" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root { --bg-color: #1a1a1a; --surface-color: #2a2a2a; --primary-color: #3b82f6; --text-color: #f1f1f1; --border-color: #444; }
-        body { font-family: 'Roboto', sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 2rem; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 600px; }
-        header { text-align: center; margin-bottom: 2rem; }
-        header h1 { color: var(--text-color); font-size: 2.5rem; margin: 0; }
-        .card { background: var(--surface-color); padding: 2rem; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.4); margin-bottom: 2rem; }
-        label { display: block; margin-bottom: 0.5rem; font-weight: 500; text-align: left; }
-        input[type="text"], select, button { width: 100%; padding: 14px; font-size: 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); box-sizing: border-box; }
-        button { background: var(--primary-color); cursor: pointer; font-weight: 700; border: none; transition: background-color 0.2s; }
-        button:hover { background: #2563eb; }
-        button:disabled { background: #555; cursor: not-allowed; }
-        .format-group, #playlist-section { display: none; margin-top: 1rem; }
-        #results-section { display: none; }
-        .progress-container { background: var(--bg-color); border-radius: 8px; padding: 5px; margin-top: 1rem; }
-        .progress-bar { background: var(--primary-color); height: 24px; width: 0%; border-radius: 5px; text-align: center; line-height: 24px; font-weight: 500; color: white; transition: width 0.3s ease; }
-        #final-message, #batch-progress-text { margin-top: 1.5rem; }
-        /* Playlist Styles */
-        #playlist-videos { max-height: 300px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; text-align: left; margin-top: 1rem; }
-        .playlist-item { display: flex; align-items: center; margin-bottom: 0.5rem; }
-        .playlist-item input[type="checkbox"] { width: auto; margin-right: 1rem; }
-        .playlist-item label { margin-bottom: 0; }
+      :root {
+        --bg-color: #1a1a1a;
+        --surface-color: #2a2a2a;
+        --primary-color: #3b82f6;
+        --text-color: #f1f1f1;
+        --border-color: #444;
+      }
+      body {
+        font-family: "Roboto", sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .container {
+        width: 100%;
+        max-width: 600px;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      header h1 {
+        color: var(--text-color);
+        font-size: 2.5rem;
+        margin: 0;
+      }
+      .card {
+        background: var(--surface-color);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        margin-bottom: 2rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        text-align: left;
+      }
+      input[type="text"],
+      select,
+      button {
+        width: 100%;
+        padding: 14px;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background: var(--bg-color);
+        color: var(--text-color);
+        box-sizing: border-box;
+      }
+      button {
+        background: var(--primary-color);
+        cursor: pointer;
+        font-weight: 700;
+        border: none;
+        transition: background-color 0.2s;
+      }
+      button:hover {
+        background: #2563eb;
+      }
+      button:disabled {
+        background: #555;
+        cursor: not-allowed;
+      }
+      .format-group,
+      #playlist-section {
+        display: none;
+        margin-top: 1rem;
+      }
+      #results-section {
+        display: none;
+      }
+      .progress-container {
+        background: var(--bg-color);
+        border-radius: 8px;
+        padding: 5px;
+        margin-top: 1rem;
+      }
+      .progress-bar {
+        background: var(--primary-color);
+        height: 24px;
+        width: 0%;
+        border-radius: 5px;
+        text-align: center;
+        line-height: 24px;
+        font-weight: 500;
+        color: white;
+        transition: width 0.3s ease;
+      }
+      #final-message,
+      #batch-progress-text {
+        margin-top: 1.5rem;
+      }
+      /* Playlist Styles */
+      #playlist-videos {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: left;
+        margin-top: 1rem;
+      }
+      .playlist-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+      .playlist-item input[type="checkbox"] {
+        width: auto;
+        margin-right: 1rem;
+      }
+      .playlist-item label {
+        margin-bottom: 0;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header><h1>YouTube Downloader</h1></header>
-        <main>
-            <div id="input-section" class="card">
-                <form id="download-form">
-                    <div class="input-group">
-                        <label for="url-input">YouTube URL</label>
-                        <input type="text" id="url-input" name="url" required>
-                    </div>
-                    <button type="button" id="check-btn">Check Available Media</button>
-                    <div id="status-message" style="margin-top: 1rem;"></div>
+      <header><h1>YouTube Downloader</h1></header>
+      <main>
+        <div id="input-section" class="card">
+          <form id="download-form">
+            <div class="input-group">
+              <label for="url-input">YouTube URL</label>
+              <input type="text" id="url-input" name="url" required />
+            </div>
+            <button type="button" id="check-btn">Check Available Media</button>
+            <div id="status-message" style="margin-top: 1rem"></div>
 
-                    <div class="format-group" id="format-group">
-                        <label for="format-select">Available Formats</label>
-                        <select id="format-select" name="format_id"></select>
-                    </div>
-
-                    <div id="playlist-section">
-                        <div class="playlist-item">
-                            <input type="checkbox" id="select-all-checkbox" checked>
-                            <label for="select-all-checkbox"><b>Select All</b></label>
-                        </div>
-                        <div id="playlist-videos"></div>
-                    </div>
-
-                    <button type="submit" id="download-btn" style="display: none; margin-top: 1rem;">Download</button>
-                </form>
+            <div class="format-group" id="format-group">
+              <label for="format-select">Available Formats</label>
+              <select id="format-select" name="format_id"></select>
             </div>
 
-            <div id="results-section" class="card">
-                <h2 id="results-header">Download Progress</h2>
-                <div id="batch-progress-text"></div>
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress-bar">0%</div>
-                </div>
-                <div id="final-message"></div>
-                <button id="reset-btn" style="display: none; margin-top: 1.5rem;">Download Another</button>
+            <div id="playlist-section">
+              <div class="playlist-item">
+                <input type="checkbox" id="select-all-checkbox" checked />
+                <label for="select-all-checkbox"><b>Select All</b></label>
+              </div>
+              <div id="playlist-videos"></div>
             </div>
-        </main>
+
+            <button
+              type="submit"
+              id="download-btn"
+              style="display: none; margin-top: 1rem"
+            >
+              Download
+            </button>
+          </form>
+        </div>
+
+        <div id="results-section" class="card">
+          <h2 id="results-header">Download Progress</h2>
+          <div id="batch-progress-text"></div>
+          <div class="progress-container">
+            <div class="progress-bar" id="progress-bar">0%</div>
+          </div>
+          <div id="final-message"></div>
+          <button id="reset-btn" style="display: none; margin-top: 1.5rem">
+            Download Another
+          </button>
+        </div>
+      </main>
     </div>
 
     <script>
-        // --- Element References ---
-        const ui = {
-            inputSection: document.getElementById('input-section'),
-            resultsSection: document.getElementById('results-section'),
-            checkBtn: document.getElementById('check-btn'),
-            downloadForm: document.getElementById('download-form'),
-            urlInput: document.getElementById('url-input'),
-            statusMessage: document.getElementById('status-message'),
-            // Single Video UI
-            formatGroup: document.getElementById('format-group'),
-            formatSelect: document.getElementById('format-select'),
-            // Playlist UI
-            playlistSection: document.getElementById('playlist-section'),
-            selectAllCheckbox: document.getElementById('select-all-checkbox'),
-            playlistVideosContainer: document.getElementById('playlist-videos'),
-            // Common UI
-            downloadBtn: document.getElementById('download-btn'),
-            // Results UI
-            resultsHeader: document.getElementById('results-header'),
-            batchProgressText: document.getElementById('batch-progress-text'),
-            progressBar: document.getElementById('progress-bar'),
-            finalMessage: document.getElementById('final-message'),
-            resetBtn: document.getElementById('reset-btn'),
-        };
+      // --- Element References ---
+      const ui = {
+        inputSection: document.getElementById("input-section"),
+        resultsSection: document.getElementById("results-section"),
+        checkBtn: document.getElementById("check-btn"),
+        downloadForm: document.getElementById("download-form"),
+        urlInput: document.getElementById("url-input"),
+        statusMessage: document.getElementById("status-message"),
+        // Single Video UI
+        formatGroup: document.getElementById("format-group"),
+        formatSelect: document.getElementById("format-select"),
+        // Playlist UI
+        playlistSection: document.getElementById("playlist-section"),
+        selectAllCheckbox: document.getElementById("select-all-checkbox"),
+        playlistVideosContainer: document.getElementById("playlist-videos"),
+        // Common UI
+        downloadBtn: document.getElementById("download-btn"),
+        // Results UI
+        resultsHeader: document.getElementById("results-header"),
+        batchProgressText: document.getElementById("batch-progress-text"),
+        progressBar: document.getElementById("progress-bar"),
+        finalMessage: document.getElementById("final-message"),
+        resetBtn: document.getElementById("reset-btn"),
+      };
 
-        // --- UI State ---
-        function setUIState(state) {
-            // Hide all dynamic sections first
-            ui.formatGroup.style.display = 'none';
-            ui.playlistSection.style.display = 'none';
-            ui.downloadBtn.style.display = 'none';
+      // --- UI State ---
+      function setUIState(state) {
+        // Hide all dynamic sections first
+        ui.formatGroup.style.display = "none";
+        ui.playlistSection.style.display = "none";
+        ui.downloadBtn.style.display = "none";
 
-            if (state === 'initial') {
-                ui.inputSection.style.display = 'block';
-                ui.resultsSection.style.display = 'none';
-                ui.checkBtn.disabled = false;
-                ui.urlInput.disabled = false;
-                ui.statusMessage.textContent = '';
-            } else if (state === 'loading') {
-                ui.checkBtn.disabled = true;
-                ui.statusMessage.textContent = 'Analyzing URL...';
-            } else if (state === 'formatsLoaded') {
-                ui.checkBtn.disabled = false;
-                ui.formatGroup.style.display = 'block';
-                ui.downloadBtn.style.display = 'block';
-                ui.statusMessage.textContent = 'Select a format and click download.';
-            } else if (state === 'playlistLoaded') {
-                ui.checkBtn.disabled = false;
-                // For playlist, we need a format selector AND the video list
-                ui.formatGroup.style.display = 'block'; 
-                ui.playlistSection.style.display = 'block';
-                ui.downloadBtn.style.display = 'block';
-                ui.statusMessage.textContent = 'Select videos and quality, then click download.';
-            } else if (state === 'downloading') {
-                ui.inputSection.style.display = 'none';
-                ui.resultsSection.style.display = 'block';
-                ui.resultsHeader.textContent = 'Download Progress';
-                ui.batchProgressText.textContent = '';
-                ui.progressBar.style.width = '0%';
-                ui.progressBar.textContent = '0%';
-                ui.finalMessage.innerHTML = '';
-            }
+        if (state === "initial") {
+          ui.inputSection.style.display = "block";
+          ui.resultsSection.style.display = "none";
+          ui.checkBtn.disabled = false;
+          ui.urlInput.disabled = false;
+          ui.statusMessage.textContent = "";
+        } else if (state === "loading") {
+          ui.checkBtn.disabled = true;
+          ui.statusMessage.textContent = "Analyzing URL...";
+        } else if (state === "formatsLoaded") {
+          ui.checkBtn.disabled = false;
+          ui.formatGroup.style.display = "block";
+          ui.downloadBtn.style.display = "block";
+          ui.statusMessage.textContent = "Select a format and click download.";
+        } else if (state === "playlistLoaded") {
+          ui.checkBtn.disabled = false;
+          // For playlist, we need a format selector AND the video list
+          ui.formatGroup.style.display = "block";
+          ui.playlistSection.style.display = "block";
+          ui.downloadBtn.style.display = "block";
+          ui.statusMessage.textContent =
+            "Select videos and quality, then click download.";
+        } else if (state === "downloading") {
+          ui.inputSection.style.display = "none";
+          ui.resultsSection.style.display = "block";
+          ui.resultsHeader.textContent = "Download Progress";
+          ui.batchProgressText.textContent = "";
+          ui.progressBar.style.width = "0%";
+          ui.progressBar.textContent = "0%";
+          ui.finalMessage.innerHTML = "";
         }
+      }
 
-        // --- Event Listeners ---
-        ui.checkBtn.addEventListener('click', async () => {
-            const url = ui.urlInput.value;
-            if (!url) { ui.statusMessage.textContent = 'Please enter a URL.'; return; }
-            setUIState('loading');
+      // --- Event Listeners ---
+      ui.checkBtn.addEventListener("click", async () => {
+        const url = ui.urlInput.value;
+        if (!url) {
+          ui.statusMessage.textContent = "Please enter a URL.";
+          return;
+        }
+        setUIState("loading");
 
-            try {
-                const response = await fetch('/get-formats', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url: url })
-                });
-                if (!response.ok) { throw new Error((await response.json()).error); }
-                const data = await response.json();
+        try {
+          const response = await fetch("/get-formats", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: url }),
+          });
+          if (!response.ok) {
+            throw new Error((await response.json()).error);
+          }
+          const data = await response.json();
 
-                if (data.is_playlist) {
-                    // Populate quality formats for the playlist
-                    ui.formatSelect.innerHTML = '';
-                    data.formats.forEach(f => ui.formatSelect.add(new Option(f.text, f.id)));
+          if (data.is_playlist) {
+            // Populate quality formats for the playlist
+            ui.formatSelect.innerHTML = "";
+            data.formats.forEach((f) =>
+              ui.formatSelect.add(new Option(f.text, f.id))
+            );
 
-                    // Populate playlist videos
-                    ui.playlistVideosContainer.innerHTML = '';
-                    data.videos.forEach(video => {
-                        const itemDiv = document.createElement('div');
-                        itemDiv.className = 'playlist-item';
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.name = 'video_ids[]'; // Important for form submission
-                        checkbox.value = video.id;
-                        checkbox.checked = true; // Default to checked
-                        checkbox.id = `video-${video.id}`;
-                        const label = document.createElement('label');
-                        label.htmlFor = `video-${video.id}`;
-                        label.textContent = video.title;
-                        itemDiv.appendChild(checkbox);
-                        itemDiv.appendChild(label);
-                        ui.playlistVideosContainer.appendChild(itemDiv);
-                    });
-                    setUIState('playlistLoaded');
-                } else {
-                    // Handle single video
-                    ui.formatSelect.innerHTML = '';
-                    if (data.formats.length === 0) throw new Error('No suitable formats found.');
-                    data.formats.forEach(f => ui.formatSelect.add(new Option(f.text, f.id)));
-                    setUIState('formatsLoaded');
-                }
-            } catch (error) {
-                setUIState('initial');
-                ui.statusMessage.textContent = 'Error: ' + error.message;
-            }
-        });
-
-        ui.selectAllCheckbox.addEventListener('change', (event) => {
-            const checkboxes = ui.playlistVideosContainer.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = event.target.checked;
+            // Populate playlist videos
+            ui.playlistVideosContainer.innerHTML = "";
+            data.videos.forEach((video) => {
+              const itemDiv = document.createElement("div");
+              itemDiv.className = "playlist-item";
+              const checkbox = document.createElement("input");
+              checkbox.type = "checkbox";
+              checkbox.name = "video_ids[]"; // Important for form submission
+              checkbox.value = video.id;
+              checkbox.checked = true; // Default to checked
+              checkbox.id = `video-${video.id}`;
+              const label = document.createElement("label");
+              label.htmlFor = `video-${video.id}`;
+              label.textContent = video.title;
+              itemDiv.appendChild(checkbox);
+              itemDiv.appendChild(label);
+              ui.playlistVideosContainer.appendChild(itemDiv);
             });
-        });
+            setUIState("playlistLoaded");
+          } else {
+            // Handle single video
+            ui.formatSelect.innerHTML = "";
+            if (data.formats.length === 0)
+              throw new Error("No suitable formats found.");
+            data.formats.forEach((f) =>
+              ui.formatSelect.add(new Option(f.text, f.id))
+            );
+            setUIState("formatsLoaded");
+          }
+        } catch (error) {
+          setUIState("initial");
+          ui.statusMessage.textContent = "Error: " + error.message;
+        }
+      });
 
-        ui.downloadForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            setUIState('downloading');
-            
-            const formData = new FormData(ui.downloadForm);
-            fetch('/download', { method: 'POST', body: formData });
-            
-            const eventSource = new EventSource('/progress-stream');
-            eventSource.onmessage = (e) => {
-                const data = JSON.parse(e.data);
-                
-                if (data.status === 'starting_video') {
-                    ui.batchProgressText.textContent = `Downloading video ${data.current} of ${data.total}...`;
-                    ui.progressBar.style.width = '0%';
-                    ui.progressBar.textContent = '0%';
-                } else if (data.status === 'downloading') {
-                    ui.progressBar.style.width = data.percent + '%';
-                    ui.progressBar.textContent = data.percent + '%';
-                } else if (data.status === 'finished_video') {
-                    // Optionally add a log of finished videos
-                } else if (data.status === 'batch_finished') {
-                    ui.resultsHeader.textContent = 'Download Complete';
-                    ui.batchProgressText.textContent = 'All selected videos have been downloaded.';
-                    ui.resetBtn.style.display = 'block';
-                    eventSource.close();
-                } else if (data.status === 'error') {
-                    ui.finalMessage.innerHTML += `❌ Error downloading a video:<code>${data.message}</code><br>`;
-                }
-            };
-            eventSource.onerror = () => { eventSource.close(); };
+      ui.selectAllCheckbox.addEventListener("change", (event) => {
+        const checkboxes = ui.playlistVideosContainer.querySelectorAll(
+          'input[type="checkbox"]'
+        );
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = event.target.checked;
         });
+      });
 
-        ui.resetBtn.addEventListener('click', () => setUIState('initial'));
-        setUIState('initial');
+      ui.downloadForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        setUIState("downloading");
+
+        const formData = new FormData(ui.downloadForm);
+        fetch("/download", { method: "POST", body: formData });
+
+        const eventSource = new EventSource("/progress-stream");
+        eventSource.onmessage = (e) => {
+          const data = JSON.parse(e.data);
+
+          if (data.status === "starting_video") {
+            ui.batchProgressText.textContent = `Downloading video ${data.current} of ${data.total}...`;
+            ui.progressBar.style.width = "0%";
+            ui.progressBar.textContent = "0%";
+          } else if (data.status === "downloading") {
+            ui.progressBar.style.width = data.percent + "%";
+            ui.progressBar.textContent = data.percent + "%";
+          } else if (data.status === "finished_video") {
+            // Optionally add a log of finished videos
+          } else if (data.status === "batch_finished") {
+            ui.resultsHeader.textContent = "Download Complete";
+            ui.batchProgressText.textContent =
+              "All selected videos have been downloaded.";
+            ui.resetBtn.style.display = "block";
+            eventSource.close();
+          } else if (data.status === "error") {
+            ui.finalMessage.innerHTML += `❌ Error downloading a video:<code>${data.message}</code><br>`;
+          }
+        };
+        eventSource.onerror = () => {
+          eventSource.close();
+        };
+      });
+
+      ui.resetBtn.addEventListener("click", () => setUIState("initial"));
+      setUIState("initial");
     </script>
-</body>
+  </body>
 </html>
